@@ -1,18 +1,17 @@
-#include <ncurses.h>
-#include <menu.h>
 #include "context.h"
+#include <menu.h>
+#include <ncurses.h>
 
-int main()
-{
-	initscr();
-	clear();
-	Context ctx;
-	getmaxyx(stdscr, ctx.rows, ctx.cols);
-	
-	printw("Hello World !!!");
-	refresh();
+int main() {
+  initscr();
+  clear();
+  Context ctx;
+  getmaxyx(stdscr, ctx.rows, ctx.cols);
 
-	getch();
-	endwin();
-	return 0;
+  printw("Hello World !!!");
+  refresh();
+
+  getch();
+  endwin();
+  return 0;
 }
