@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 typedef struct PathNode {
-  const char *val;
+  char *val;
   size_t val_len; // without '\0'
   struct PathNode *prev;
   struct PathNode *next;
@@ -25,8 +25,8 @@ PathList *split_path(const char *path);
 
 void pop_back(PathList *list);
 
-void push_back(PathList *list, const char *val);
+void push_back(PathList *list, char *val);
 
 void free_path_list(PathList *list);
 
-#endif
+#endif //  H_PATH_LIST

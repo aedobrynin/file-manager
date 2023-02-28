@@ -3,8 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "logging.h"
+
 char *join_path(const PathList *list) {
   if (list == NULL) {
+    debug_print("%s\n", "list is NULL");
     exit(EXIT_FAILURE);
   }
 
@@ -24,11 +27,35 @@ char *join_path(const PathList *list) {
 }
 
 PathList *split_path(const char *path) {
-  // TODO
+  if (path == NULL) {
+    debug_print("%s\n", "path is NULL");
+    exit(EXIT_FAILURE);
+  }
+  if (*path != '/') {
+    debug_print("%s\n", "path should start with '/'")
+    exit(EXIT_FAILURE);
+  }
+  ++path;
+
+  PathList *list = calloc(1, sizeof(*list));
+
+  char *slash_pos = strchr(path, '/');
+  while (slash_pos != NULL) {
+    size_t buf_size = slash_pos - path + 1;
+    char *value = calloc(buf_size, sizeof(*value));
+    strncpy(value, path, buf_size - 1);
+    *(value + buf_size - 1) = '\0';
+    push_back(list, value);
+    path = slash_pos + 1;
+    slash_pos = strchr(path, '/');
+  }
+  // TODO: append last path element
+  return list;
 }
 
 void pop_back(PathList *list) {
   if (list == NULL || list->last == NULL) {
+    debug_print("%s\n", "list is NULL or empty");
     exit(EXIT_FAILURE);
   }
 
@@ -49,8 +76,9 @@ void pop_back(PathList *list) {
   --list->nodes_cnt;
 }
 
-void push_back(PathList *list, const char *val) {
+void push_back(PathList *list, char *val) {
   if (list == NULL) {
+    debug_print("%s\n", "list is NULL");
     exit(EXIT_FAILURE);
   }
 
@@ -83,6 +111,7 @@ void free_path_list(PathList *list) {
   PathNode *cur = list->first;
   while (cur) {
     PathNode *nxt = cur->next;
+    free(cur->val);
     free(cur);
     cur = nxt;
   }

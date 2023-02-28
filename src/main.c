@@ -9,6 +9,7 @@ int main() {
   getmaxyx(stdscr, ctx.rows, ctx.cols);
 
   printw("Hello World !!!");
+
   refresh();
 
   getch();

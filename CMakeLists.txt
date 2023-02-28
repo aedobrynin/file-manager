@@ -9,4 +9,6 @@ add_executable(file_manager
         src/main.c
         src/path_list.c)
 
+add_compile_definitions(DEBUG=1)
+
 target_link_libraries(file_manager ${CURSES_LIBRARIES})
