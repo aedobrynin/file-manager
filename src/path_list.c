@@ -13,7 +13,6 @@ char *join_path(const PathList *list) {
 
   size_t buf_len = list->path_len + 1;
   char *buf = calloc(buf_len, sizeof(*buf));
-
   char *cur_buf_place = buf;
   PathNode *cur_node = list->first;
   while (cur_node) {
@@ -21,6 +20,7 @@ char *join_path(const PathList *list) {
     ++cur_buf_place;
     strncpy(cur_buf_place, cur_node->val, cur_node->val_len);
     cur_buf_place += cur_node->val_len;
+    cur_node = cur_node->next;
   }
   *cur_buf_place = '\0';
   return buf;
@@ -103,7 +103,7 @@ void push_back(PathList *list, char *val) {
   ++list->nodes_cnt;
 }
 
-void free_path_list(PathList *list) {
+void destroy_path_list(PathList *list) {
   if (list == NULL) {
     return;
   }

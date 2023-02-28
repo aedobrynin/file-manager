@@ -27,6 +27,6 @@ void pop_back(PathList *list);
 
 void push_back(PathList *list, char *val);
 
-void free_path_list(PathList *list);
+void destroy_path_list(PathList *list);
 
 #endif //  H_PATH_LIST

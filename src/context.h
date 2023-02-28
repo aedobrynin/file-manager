@@ -1,17 +1,17 @@
-#include <menu.h>
+#ifndef H_CONTEXT
+#define H_CONTEXT
 
 #include "path_list.h"
-
-typedef struct MenuState {
-  MENU *menu;
-  size_t items_cnt;
-  ITEM **items;
-} MenuState;
+#include "menu_state.h"
 
 typedef struct Context {
   unsigned rows;
   unsigned cols;
-  char *cur_path;
-  MenuState cur_menu_state;
+  MenuState *menu_state;
   PathList *path_list;
 } Context;
+
+void init_context(Context *ctx);
+void destroy_context(Context *ctx);
+
+#endif //  H_CONTEXT
