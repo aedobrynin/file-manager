@@ -3,12 +3,13 @@
  
 typedef struct PathNode {
     const char* value;
+    struct PathNode* prev;
     struct PathNode* next;
 } PathNode;
 
 typedef struct PathList {
-    PathNode* head;
-    PathNode* tail;
+    PathNode* first;
+    PathNode* last;
 } PathList;
 
 // Returns joined path allocated on the heap.
