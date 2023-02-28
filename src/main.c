@@ -1,12 +1,18 @@
 #include <ncurses.h>
+#include <menu.h>
+#include "context.h"
 
 int main()
 {
-	initscr();			/* Start curses mode 		  */
-	printw("Hello World !!!");	/* Print Hello World		  */
-	refresh();			/* Print it on to the real screen */
-	getch();			/* Wait for user input */
-	endwin();			/* End curses mode		  */
+	initscr();
+	clear();
+	Context ctx;
+	getmaxyx(stdscr, ctx.rows, ctx.cols);
+	
+	printw("Hello World !!!");
+	refresh();
 
+	getch();
+	endwin();
 	return 0;
 }
