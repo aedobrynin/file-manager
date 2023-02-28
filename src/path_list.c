@@ -32,7 +32,7 @@ PathList *split_path(const char *path) {
     exit(EXIT_FAILURE);
   }
   if (*path != '/') {
-    debug_print("%s\n", "path should start with '/'")
+    debug_print("%s\n", "path should start with '/'");
     exit(EXIT_FAILURE);
   }
   ++path;

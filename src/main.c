@@ -2,7 +2,11 @@
 #include <menu.h>
 #include <ncurses.h>
 
+#include "logging.h"
+
 int main() {
+  init_logging();
+
   initscr();
   clear();
   Context ctx;
@@ -11,7 +15,7 @@ int main() {
   printw("Hello World !!!");
 
   refresh();
-
+  debug_print("%s\n", "kek");
   getch();
   endwin();
   return 0;

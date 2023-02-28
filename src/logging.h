@@ -7,6 +7,13 @@
 
 #include <stdio.h>
 
+#define init_logging()                                                         \
+  do {                                                                         \
+    if (DEBUG) {                                                               \
+      freopen("log.txt", "w", stderr);                                         \
+    }                                                                          \
+  } while (0)
+
 #define debug_print(fmt, ...)                                                  \
   do {                                                                         \
     if (DEBUG) {                                                               \
