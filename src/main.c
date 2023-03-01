@@ -1,35 +1,43 @@
-#include <ncurses.h>
 #include <curses.h>
+#include <ncurses.h>
 
 #include "context.h"
 #include "logging.h"
 
+
+void main_loop(Context *ctx) {
+  printw("Hello World !!!");
+  refresh();
+  int c;
+  while (1) {
+    c = getch();
+    switch (c) {
+    case KEY_UP:
+      break;
+    case KEY_DOWN:
+      break;
+    case KEY_LEFT:
+      break;
+    default:
+      break;
+    }
+
+    refresh();
+  }
+}
+
 int main() {
   init_logging();
-
   initscr();
-  // noecho();
-	// cbreak();	/* Line buffering disabled. pass on everything */
-  // keypad(stdscr, TRUE);
+  noecho();
+  cbreak();
+  keypad(stdscr, TRUE);
   clear();
 
   Context ctx;
   init_context(&ctx);
 
-  printw("Hello World !!!");
-  refresh();
-
-  // int c;
-  // while(1)
-	// {	c = getch();
-	// 	switch(c)
-	// 	{	case KEY_UP:
-	// 			return 1;
-	// 			break;
-  //     default:
-  //       break;
-	// 	}
-	// }	
+  main_loop(&ctx);
 
   destroy_context(&ctx);
   endwin();

@@ -22,6 +22,10 @@ char *join_path(const PathList *list) {
     cur_buf_place += cur_node->val_len;
     cur_node = cur_node->next;
   }
+  if (list->nodes_cnt == 0) {
+    *cur_buf_place = '/';
+    ++cur_buf_place;
+  }
   *cur_buf_place = '\0';
   return buf;
 }

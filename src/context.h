@@ -1,8 +1,8 @@
 #ifndef H_CONTEXT
 #define H_CONTEXT
 
-#include "path_list.h"
 #include "menu_state.h"
+#include "path_list.h"
 
 typedef struct Context {
   unsigned rows;
