@@ -15,7 +15,9 @@ void init_menu_state(MenuState *state);
 
 void build_menu(MenuState* state, FilesystemEntity* fs_entites, size_t fs_ent_sz);
 
-void destroy_menu_state(MenuState *state);
+void menu_up(MenuState* state);
+void menu_down(MenuState* state);
 
+void destroy_menu_state(MenuState *state);
 
 #endif //  H_MENU_STATE

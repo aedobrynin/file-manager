@@ -30,11 +30,13 @@ void main_loop(Context *ctx) {
     c = getch();
     switch (c) {
     case KEY_UP:
+      menu_up(ctx->menu_state);
       break;
     case KEY_DOWN:
-      return;
+      menu_down(ctx->menu_state);
       break;
     case KEY_LEFT:
+      return;
       break;
     default:
       break;

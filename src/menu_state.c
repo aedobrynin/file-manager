@@ -48,6 +48,14 @@ void build_menu(MenuState* state, FilesystemEntity* fs_entities, size_t fs_ent_s
   menu_opts_off(state->menu, O_SHOWDESC);
 }
 
+void menu_up(MenuState* state) {
+  menu_driver(state->menu, REQ_UP_ITEM);
+}
+
+void menu_down(MenuState* state) {
+  menu_driver(state->menu, REQ_DOWN_ITEM);
+}
+
 void destroy_menu_state(MenuState *state) {
   if (state == NULL) {
     debug_print("%s\n", "Warning! State is null!");
