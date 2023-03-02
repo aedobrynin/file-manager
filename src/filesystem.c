@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 static FilesystemEntity* resize(FilesystemEntity* buf, size_t new_capacity) {
     FilesystemEntity* new_buf = realloc(buf, sizeof(*buf) * new_capacity);
@@ -14,6 +15,10 @@ static FilesystemEntity* resize(FilesystemEntity* buf, size_t new_capacity) {
         exit(EXIT_FAILURE);
     }
     return new_buf;
+}
+
+static bool is_dot(char fname[256]) {
+    return strlen(fname) == 1 && fname[0] == '.';
 }
 
 FilesystemEntity* get_filesystem_entities(const char* path, size_t* cnt) {
@@ -33,6 +38,9 @@ FilesystemEntity* get_filesystem_entities(const char* path, size_t* cnt) {
     }
     struct dirent *dp;
     while ((dp = readdir(dir)) != NULL) {
+        if (is_dot(dp->d_name)) {
+            continue;
+        } 
         if (size == capacity) {
             enum {
                 REALLOC_FACTOR = 2,
