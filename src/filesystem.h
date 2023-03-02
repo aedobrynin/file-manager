@@ -6,12 +6,11 @@
 
 #include "logging.h"
 
-enum EntityType { ET_FILE = 0, ET_DIRECTORY = 1, ET_OTHER = 2 };
+enum EntityType { ET_FILE = 'F', ET_DIRECTORY = 'D', ET_OTHER = 'O' };
 
 typedef struct FilesystemEntity {
   char name[NAME_MAX + 1];
   enum EntityType entity_type;
-
 } FilesystemEntity;
 
 // returns array of FilesystemEntity objects

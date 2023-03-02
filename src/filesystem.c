@@ -32,7 +32,7 @@ FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt) {
   if (dir == NULL) {
     perror("opendir");
     debug_print("%s\n", "can't opendir");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
 
   size_t capacity = 1;
@@ -40,7 +40,7 @@ FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt) {
   FilesystemEntity *buf = calloc(capacity, sizeof(*buf));
   if (buf == NULL) {
     debug_print("%s\n", "can't alloc");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
   struct dirent *dp;
   while ((dp = readdir(dir)) != NULL) {

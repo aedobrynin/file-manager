@@ -23,9 +23,12 @@ char *join_path(const PathList *list);
 // Returns splitted path allocated on the heap.
 PathList *split_path(const char *path);
 
+PathNode *pop_back_no_free(PathList *list);
 void pop_back(PathList *list);
+void free_node(PathNode *node);
 
 void push_back(PathList *list, char *val);
+void push_back_node(PathList *list, PathNode *node);
 
 void destroy_path_list(PathList *list);
 

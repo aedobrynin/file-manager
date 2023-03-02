@@ -57,13 +57,13 @@ PathList *split_path(const char *path) {
   return list;
 }
 
-void pop_back(PathList *list) {
+PathNode *pop_back_no_free(PathList *list) {
   if (list == NULL || list->last == NULL) {
     debug_print("%s\n", "list is NULL or empty");
     exit(EXIT_FAILURE);
   }
 
-  PathNode *to_free = list->last;
+  PathNode *to_remove = list->last;
   list->last = list->last->prev;
   if (list->last) {
     list->last->next = NULL;
@@ -71,14 +71,36 @@ void pop_back(PathList *list) {
     list->first = NULL;
   }
 
-  list->path_len -= to_free->val_len;
+  list->path_len -= to_remove->val_len;
   if (list->path_len != 1) {
     --list->path_len; // Remove slash
   }
-
-  free(to_free->val);
-  free(to_free);
   --list->nodes_cnt;
+  return to_remove;
+}
+
+void pop_back(PathList *list) {
+  PathNode *to_free = pop_back_no_free(list);
+  free_node(to_free);
+}
+
+void push_back_node(PathList *list, PathNode *node) {
+  node->next = NULL;
+  node->prev = list->last;
+  if (list->last) {
+    list->last->next = node;
+    list->last = node;
+  } else {
+    list->first = node;
+    list->last = node;
+  }
+
+  if (list->path_len != 1) {
+    list->path_len += 1 + node->val_len;
+  } else {
+    list->path_len += node->val_len;
+  }
+  ++list->nodes_cnt;
 }
 
 void push_back(PathList *list, char *val) {
@@ -90,22 +112,12 @@ void push_back(PathList *list, char *val) {
   PathNode *to_add = calloc(1, sizeof(*to_add));
   to_add->val = val;
   to_add->val_len = strlen(val);
-  to_add->next = NULL;
-  to_add->prev = list->last;
-  if (list->last) {
-    list->last->next = to_add;
-    list->last = to_add;
-  } else {
-    list->first = to_add;
-    list->last = to_add;
-  }
+  push_back_node(list, to_add);
+}
 
-  if (list->path_len != 1) {
-    list->path_len += 1 + to_add->val_len;
-  } else {
-    list->path_len += to_add->val_len;
-  }
-  ++list->nodes_cnt;
+void free_node(PathNode *node) {
+  free(node->val);
+  free(node);
 }
 
 void destroy_path_list(PathList *list) {
@@ -116,8 +128,7 @@ void destroy_path_list(PathList *list) {
   PathNode *cur = list->first;
   while (cur) {
     PathNode *nxt = cur->next;
-    free(cur->val);
-    free(cur);
+    free_node(cur);
     cur = nxt;
   }
   free(list);

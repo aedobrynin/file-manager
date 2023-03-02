@@ -14,6 +14,7 @@ add_executable(file_manager
         src/path_list.c
         src/context.c
         src/menu_state.c
-        src/filesystem.c)
+        src/filesystem.c
+        src/logic.c)
 
 target_link_libraries(file_manager ${CURSES_LIBRARY} menu)
