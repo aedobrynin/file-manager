@@ -24,7 +24,14 @@ void init_context(Context *ctx) {
   ctx->path_list = split_path(path);
   free(path);
 
-  ctx->menu_state = NULL;
+  ctx->menu_state = calloc(1, sizeof(*ctx->menu_state));
+  if (ctx->menu_state == NULL) {
+    debug_print("%s\n", "can't alloc");
+    exit(EXIT_FAILURE);
+  }
+  init_menu_state(ctx->menu_state);
+
+  ctx->cur_fs_entities = NULL;
 }
 
 void destroy_context(Context *ctx) {
@@ -33,4 +40,6 @@ void destroy_context(Context *ctx) {
   ctx->path_list = NULL;
   destroy_menu_state(ctx->menu_state);
   ctx->menu_state = NULL;
+
+  free(ctx->cur_fs_entities);
 }

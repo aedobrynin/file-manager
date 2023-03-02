@@ -119,6 +119,5 @@ void destroy_path_list(PathList *list) {
     free(cur);
     cur = nxt;
   }
-
   free(list);
 }

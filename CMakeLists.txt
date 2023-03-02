@@ -13,6 +13,7 @@ add_executable(file_manager
         src/main.c
         src/path_list.c
         src/context.c
-        src/menu_state.c)
+        src/menu_state.c
+        src/filesystem.c)
 
-target_link_libraries(file_manager ${CURSES_LIBRARIES})
+target_link_libraries(file_manager ${CURSES_LIBRARY} menu)
