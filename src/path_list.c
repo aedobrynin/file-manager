@@ -76,6 +76,7 @@ void pop_back(PathList *list) {
     --list->path_len; // Remove slash
   }
 
+  free(to_free->val);
   free(to_free);
   --list->nodes_cnt;
 }
