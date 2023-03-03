@@ -7,6 +7,7 @@
 typedef struct CopyContext {
   char *copy_from;
   char *filename;
+  bool is_cut; // if true, deletes file in end_copy().
 } CopyContext;
 
 typedef struct Context {

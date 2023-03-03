@@ -79,7 +79,7 @@ void delete_file(Context *ctx) {
   update_menu(ctx);
 }
 
-void start_copy(Context *ctx) {
+void start_copy(Context *ctx, bool is_cut) {
   free_copy_context(ctx);
 
   const FilesystemEntity *cur_fs_entity = get_cur_fs_entity(ctx->menu_state);
@@ -100,6 +100,7 @@ void start_copy(Context *ctx) {
     debug_print("%s\n", "can't alloc");
     return;
   }
+  ctx->copy_ctx.is_cut = is_cut;
 }
 
 void end_copy(Context *ctx) {
@@ -124,9 +125,13 @@ void end_copy(Context *ctx) {
   }
   debug_print("trying to copy from %s to %s\n", copy_from, copy_to);
   int res = copy_file(copy_from, copy_to);
-  free(copy_from);
-  free(copy_to);
+  
   if (res == 0) {
+    if (ctx->copy_ctx.is_cut) {
+      recursive_delete(copy_from, ET_FILE);
+    }
     update_menu(ctx);
   }
+  free(copy_from);
+  free(copy_to);
 }

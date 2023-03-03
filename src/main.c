@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "context.h"
 #include "filesystem.h"
@@ -41,7 +42,11 @@ void main_loop(Context *ctx) {
       break;
     case 'C':
     case 'c':
-      start_copy(ctx);
+      start_copy(ctx, false);
+      break;
+    case 'X':
+    case 'x':
+      start_copy(ctx, true);
       break;
     case 'V':
     case 'v':
