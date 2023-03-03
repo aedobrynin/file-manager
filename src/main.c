@@ -35,6 +35,9 @@ void main_loop(Context *ctx) {
     case 'h':
       toggle_hidden(ctx);
       break;
+    case 'D':
+    case 'd':
+      delete_file(ctx);
     default:
       break;
     }

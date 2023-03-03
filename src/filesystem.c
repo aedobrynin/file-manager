@@ -218,3 +218,21 @@ void destroy_fs_entities(FilesystemEntity *fs_ent, size_t sz) {
   }
   free(fs_ent);
 }
+
+static int remove_callback(const char *filepath, const struct stat * sb, int typeflag, struct FTW* ftwbuf) {
+    int rv = remove(filepath);
+    if (rv) {
+        perror(filepath);
+    }
+    return rv;
+}
+
+int recursive_delete(char *path, enum EntityType en_type) {
+  int typeflag;
+  if (en_type == ET_DIRECTORY) {
+    typeflag = FTW_D;
+  } else {
+    typeflag = FTW_F;
+  }
+  return nftw(path, remove_callback, typeflag, FTW_DEPTH | FTW_PHYS);
+}

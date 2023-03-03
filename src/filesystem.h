@@ -1,6 +1,10 @@
 #ifndef H_FILESYSTEM
 #define H_FILESYSTEM
 
+#define _XOPEN_SOURCE 500
+#include <stdio.h>
+#include <ftw.h>
+#include <unistd.h>
 #include <limits.h>
 #include <stdbool.h>
 
@@ -28,5 +32,7 @@ FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt,
 bool is_parent_directory(const FilesystemEntity *fs_ent);
 
 void destroy_fs_entities(FilesystemEntity *fs_ent, size_t sz);
+
+int recursive_delete(char *path, enum EntityType en_type);
 
 #endif // H_FILESYSTEM
