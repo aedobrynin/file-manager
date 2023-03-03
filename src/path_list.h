@@ -1,5 +1,4 @@
-#ifndef H_PATH_LIST
-#define H_PATH_LIST
+#pragma once
 
 #include <stddef.h>
 
@@ -31,5 +30,3 @@ void push_back(PathList *list, char *val);
 void push_back_node(PathList *list, PathNode *node);
 
 void destroy_path_list(PathList *list);
-
-#endif //  H_PATH_LIST

@@ -1,5 +1,4 @@
-#ifndef H_LOGGING
-#define H_LOGGING
+#pragma once
 
 #ifndef DEBUG
 #define DEBUG 0
@@ -22,5 +21,3 @@
       fflush(stderr);                                                          \
     }                                                                          \
   } while (0)
-
-#endif //  H_LOGGING

@@ -64,14 +64,14 @@ void toggle_hidden(Context *ctx) {
 }
 
 void delete_file(Context *ctx) {
-  const FilesystemEntity *cur_fs_entity = get_cur_fs_entity(ctx->menu_state);  
-  char* name_dup = strdup(cur_fs_entity->name);
+  const FilesystemEntity *cur_fs_entity = get_cur_fs_entity(ctx->menu_state);
+  char *name_dup = strdup(cur_fs_entity->name);
   if (name_dup == NULL) {
     debug_print("%s\n", "can't alloc");
     return;
   }
   push_back(ctx->path_list, name_dup);
-  char* path = join_path(ctx->path_list);
+  char *path = join_path(ctx->path_list);
   debug_print("deleting at path %s\n", path);
   recursive_delete(path, cur_fs_entity->entity_type);
   pop_back(ctx->path_list);

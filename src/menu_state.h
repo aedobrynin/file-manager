@@ -1,5 +1,4 @@
-#ifndef H_MENU_STATE
-#define H_MENU_STATE
+#pragma once
 
 #include <menu.h>
 
@@ -22,5 +21,3 @@ void menu_down(MenuState *state);
 const FilesystemEntity *get_cur_fs_entity(MenuState *state);
 
 void destroy_menu_state(MenuState *state);
-
-#endif //  H_MENU_STATE

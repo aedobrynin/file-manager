@@ -1,5 +1,4 @@
-#ifndef H_CONTEXT
-#define H_CONTEXT
+#pragma once
 
 #include "filesystem.h"
 #include "menu_state.h"
@@ -21,5 +20,3 @@ typedef struct Context {
 
 void init_context(Context *ctx);
 void destroy_context(Context *ctx);
-
-#endif //  H_CONTEXT
