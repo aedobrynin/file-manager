@@ -31,6 +31,10 @@ void main_loop(Context *ctx) {
       break;
     case KEY_BACKSPACE:
       return;
+    case 'H':
+    case 'h':
+      toggle_hidden(ctx);
+      break;
     default:
       break;
     }

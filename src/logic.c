@@ -13,8 +13,8 @@ bool update_menu(Context *ctx) {
   char *path = join_path(ctx->path_list);
 
   size_t new_fs_entities_sz;
-  FilesystemEntity *new_fs_entities =
-      get_filesystem_entities(path, &new_fs_entities_sz, ctx->cols);
+  FilesystemEntity *new_fs_entities = get_filesystem_entities(
+      path, &new_fs_entities_sz, ctx->show_hidden, ctx->cols);
   free(path);
   if (new_fs_entities == NULL) {
     debug_print("%s\n", "can't get fs_entities");
@@ -56,4 +56,9 @@ void walk(Context *ctx) {
   }
 
   refresh();
+}
+
+void toggle_hidden(Context *ctx) {
+  ctx->show_hidden ^= 1;
+  update_menu(ctx);
 }

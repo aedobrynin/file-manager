@@ -33,6 +33,8 @@ void init_context(Context *ctx) {
 
   ctx->cur_fs_entities = NULL;
   ctx->cur_fs_entities_sz = 0;
+
+  ctx->show_hidden = false;
 }
 
 void destroy_context(Context *ctx) {

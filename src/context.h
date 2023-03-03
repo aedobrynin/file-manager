@@ -15,6 +15,8 @@ typedef struct Context {
 
   FilesystemEntity *cur_fs_entities;
   size_t cur_fs_entities_sz;
+
+  bool show_hidden;
 } Context;
 
 void init_context(Context *ctx);

@@ -141,7 +141,19 @@ static char *get_fs_ent_descr(const char *dir_path,
   return get_other_descr(fs_ent, len, name_len);
 }
 
+static bool is_parent_directory_name(const char *name) {
+  return strlen(name) == 2 && name[0] == '.' && name[1] == '.';
+}
+
+static bool is_hidden(bool is_dir, const char *filename) {
+  if (is_dir && is_parent_directory_name(filename)) {
+    return false;
+  }
+  return filename[0] == '.';
+}
+
 FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt,
+                                          bool show_hidden,
                                           unsigned descr_length) {
   DIR *dir = opendir(path);
   if (dir == NULL) {
@@ -160,6 +172,9 @@ FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt,
   struct dirent *dp;
   while ((dp = readdir(dir)) != NULL) {
     if (is_dot(dp->d_name)) {
+      continue;
+    }
+    if (!show_hidden && is_hidden(dp->d_type == DT_DIR, dp->d_name)) {
       continue;
     }
     if (size == capacity) {
@@ -194,8 +209,7 @@ bool is_parent_directory(const FilesystemEntity *fs_ent) {
   if (fs_ent->entity_type != ET_DIRECTORY) {
     return false;
   }
-  return strlen(fs_ent->name) == 2 && fs_ent->name[0] == '.' &&
-         fs_ent->name[1] == '.';
+  return is_parent_directory_name(fs_ent->name);
 }
 
 void destroy_fs_entities(FilesystemEntity *fs_ent, size_t sz) {

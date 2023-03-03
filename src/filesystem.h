@@ -22,6 +22,7 @@ typedef struct FilesystemEntity {
 // returns array of FilesystemEntity objects
 // puts array size into cnt
 FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt,
+                                          bool show_hidden,
                                           unsigned descr_width);
 
 bool is_parent_directory(const FilesystemEntity *fs_ent);
