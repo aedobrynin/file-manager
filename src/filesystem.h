@@ -33,3 +33,5 @@ bool is_parent_directory(const FilesystemEntity *fs_ent);
 void destroy_fs_entities(FilesystemEntity *fs_ent, size_t sz);
 
 int recursive_delete(char *path, enum EntityType en_type);
+
+int copy_file(const char *source, const char *destination);

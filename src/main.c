@@ -38,6 +38,15 @@ void main_loop(Context *ctx) {
     case 'D':
     case 'd':
       delete_file(ctx);
+      break;
+    case 'C':
+    case 'c':
+      start_copy(ctx);
+      break;
+    case 'V':
+    case 'v':
+      end_copy(ctx);
+      break;
     default:
       break;
     }

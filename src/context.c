@@ -35,6 +35,14 @@ void init_context(Context *ctx) {
   ctx->cur_fs_entities_sz = 0;
 
   ctx->show_hidden = false;
+
+  ctx->copy_ctx.copy_from = NULL;
+  ctx->copy_ctx.filename = NULL;
+}
+
+void free_copy_context(Context *ctx) {
+  free(ctx->copy_ctx.copy_from);
+  free(ctx->copy_ctx.filename);
 }
 
 void destroy_context(Context *ctx) {
@@ -43,6 +51,6 @@ void destroy_context(Context *ctx) {
   ctx->path_list = NULL;
   destroy_menu_state(ctx->menu_state);
   ctx->menu_state = NULL;
-
+  free_copy_context(ctx);
   destroy_fs_entities(ctx->cur_fs_entities, ctx->cur_fs_entities_sz);
 }

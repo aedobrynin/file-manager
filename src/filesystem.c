@@ -3,11 +3,14 @@
 #include "filesystem.h"
 
 #include <dirent.h>
+#include <fcntl.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/sendfile.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include "path_list.h"
 
@@ -32,17 +35,16 @@ static int sort_fs_entities_by_name(const void *a, const void *b) {
   return strncmp(fs_a->name, fs_b->name, NAME_MAX + 1);
 }
 
-static off_t get_file_size(const char *dir_path, const FilesystemEntity *fs_ent,
-                           size_t fs_ent_name_len) {
+static off_t get_file_size(const char *dir_path,
+                           const FilesystemEntity *fs_ent) {
   PathList *path_list = split_path(dir_path);
 
-  char *fs_ent_name = calloc(1, fs_ent_name_len + 1);
-  if (fs_ent_name == NULL) {
-    debug_print("%s\n", "can't alloc");
+  char *fs_ent_name_dup = strdup(fs_ent->name);
+  if (fs_ent_name_dup == NULL) {
+    debug_print("%s\n", "can't copy string");
     exit(EXIT_FAILURE);
   }
-  strcpy(fs_ent_name, fs_ent->name);
-  push_back(path_list, fs_ent_name);
+  push_back(path_list, fs_ent_name_dup);
 
   char *filepath = join_path(path_list);
   destroy_path_list(path_list);
@@ -60,7 +62,7 @@ static off_t get_file_size(const char *dir_path, const FilesystemEntity *fs_ent,
 static char *get_file_descr(const char *dir_path,
                             const FilesystemEntity *fs_ent, unsigned len,
                             size_t fs_ent_name_len) {
-  off_t filesize = get_file_size(dir_path, fs_ent, fs_ent_name_len);
+  off_t filesize = get_file_size(dir_path, fs_ent);
   int filesize_len = snprintf(NULL, 0, "%jd", filesize);
 
   char *buf = calloc(1, len + 1);
@@ -236,4 +238,37 @@ int recursive_delete(char *path, enum EntityType en_type) {
     typeflag = FTW_F;
   }
   return nftw(path, remove_callback, typeflag, FTW_DEPTH | FTW_PHYS);
+}
+
+int copy_file(const char *source, const char *destination) {
+  int input, output;
+  if ((input = open(source, O_RDONLY)) == -1) {
+    debug_print("%s\n", "can't open for copy");
+    perror("open");
+    return -1;
+  }
+  if ((output = creat(destination, 0660)) == -1) {
+    close(input);
+    debug_print("%s\n", "can't creat for copy");
+    perror("creat");
+    return -1;
+  }
+
+  struct stat fileinfo = {0};
+  fstat(input, &fileinfo);
+  off_t need_to_copy = fileinfo.st_size;
+  int result = 0;
+  while (need_to_copy != 0) {
+    off_t offset = fileinfo.st_size - need_to_copy;
+    result = sendfile(output, input, &offset, fileinfo.st_size);
+    if (result < 0) {
+      debug_print("%s\n", "can't copy");
+      perror("sendfile");
+      break;
+    }
+    need_to_copy -= result;
+  }
+  close(input);
+  close(output);
+  return need_to_copy != 0;
 }

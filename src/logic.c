@@ -43,12 +43,12 @@ void walk(Context *ctx) {
       free_node(node);
     }
   } else {
-    char *val = calloc(1, strlen(cur_fs_entity->name) + 1);
+    char *val = strdup(cur_fs_entity->name);
     if (val == NULL) {
-      debug_print("%s\n", "can't alloc");
+      debug_print("%s\n", "can't strdup");
+      perror("strdup");
       exit(EXIT_FAILURE);
     }
-    strcpy(val, cur_fs_entity->name);
     push_back(ctx->path_list, val);
     if (!update_menu(ctx)) {
       pop_back(ctx->path_list);
@@ -77,4 +77,56 @@ void delete_file(Context *ctx) {
   pop_back(ctx->path_list);
   free(path);
   update_menu(ctx);
+}
+
+void start_copy(Context *ctx) {
+  free_copy_context(ctx);
+
+  const FilesystemEntity *cur_fs_entity = get_cur_fs_entity(ctx->menu_state);
+  if (cur_fs_entity->entity_type == ET_DIRECTORY) {
+    debug_print("%s\n", "can't copy a directory");
+    return;
+  }
+  char *name_dup = strdup(cur_fs_entity->name);
+  if (name_dup == NULL) {
+    debug_print("%s\n", "can't alloc");
+    return;
+  }
+  push_back(ctx->path_list, name_dup);
+  ctx->copy_ctx.copy_from = join_path(ctx->path_list);
+  pop_back(ctx->path_list);
+  ctx->copy_ctx.filename = strdup(cur_fs_entity->name);
+  if (ctx->copy_ctx.filename == NULL) {
+    debug_print("%s\n", "can't alloc");
+    return;
+  }
+}
+
+void end_copy(Context *ctx) {
+  if (ctx->copy_ctx.copy_from == NULL) {
+    debug_print("%s\n", "can't copy, copy_from is not set");
+    return;
+  }
+
+  push_back(ctx->path_list, ctx->copy_ctx.filename);
+  char *copy_to = join_path(ctx->path_list);
+  pop_back(ctx->path_list);
+
+  char *copy_from = ctx->copy_ctx.copy_from;
+  ctx->copy_ctx.copy_from = NULL;
+  ctx->copy_ctx.filename = NULL;
+
+  if (strcmp(copy_from, copy_to) == 0) {
+    debug_print("%s\n", "can't copy to the same path");
+    free(copy_from);
+    free(copy_to);
+    return;
+  }
+  debug_print("trying to copy from %s to %s\n", copy_from, copy_to);
+  int res = copy_file(copy_from, copy_to);
+  free(copy_from);
+  free(copy_to);
+  if (res == 0) {
+    update_menu(ctx);
+  }
 }
