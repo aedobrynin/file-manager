@@ -13,6 +13,10 @@ char *join_path(const PathList *list) {
 
   size_t buf_len = list->path_len + 1;
   char *buf = calloc(buf_len, sizeof(*buf));
+  if (buf == NULL) {
+    debug_print("%s\n", "can't alloc");
+    exit(EXIT_FAILURE);
+  }
   char *cur_buf_place = buf;
   PathNode *cur_node = list->first;
   while (cur_node) {
@@ -47,13 +51,26 @@ PathList *split_path(const char *path) {
   while (slash_pos != NULL) {
     size_t buf_size = slash_pos - path + 1;
     char *value = calloc(buf_size, sizeof(*value));
+    if (value == NULL) {
+      debug_print("%s\n", "can't alloc");
+      exit(EXIT_FAILURE);
+    }
     strncpy(value, path, buf_size - 1);
     *(value + buf_size - 1) = '\0';
     push_back(list, value);
     path = slash_pos + 1;
     slash_pos = strchr(path, '/');
   }
-  // TODO: append last path element
+
+  size_t buf_size = strlen(path) + 1;
+  char *value = calloc(buf_size, sizeof(*value));
+  if (value == NULL) {
+    debug_print("%s\n", "can't alloc");
+    exit(EXIT_FAILURE);
+  }
+  strncpy(value, path, buf_size - 1);
+  *(value + buf_size - 1) = '\0';
+  push_back(list, value);
   return list;
 }
 

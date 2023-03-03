@@ -7,6 +7,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+
+#include "path_list.h"
+
+enum {
+  NCURSES_WINDOW_RIGHT_SIZE_OFFSET = 1
+};
 
 static FilesystemEntity *resize(FilesystemEntity *buf, size_t new_capacity) {
   FilesystemEntity *new_buf = realloc(buf, sizeof(*buf) * new_capacity);
@@ -27,7 +34,81 @@ static int sort_fs_entities_by_name(const void *a, const void *b) {
   return strncmp(fs_a->name, fs_b->name, NAME_MAX + 1);
 }
 
-FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt) {
+static off_t get_file_size(const char* dir_path, const FilesystemEntity* fs_ent, size_t fs_ent_name_len) {
+  debug_print("get_file_size for file %s at %s\n", fs_ent->name, dir_path);
+  PathList* path_list = split_path(dir_path);
+
+  char* fs_ent_name = calloc(1, fs_ent_name_len + 1);
+  if (fs_ent_name == NULL) {
+    debug_print("%s\n", "can't alloc");
+    exit(EXIT_FAILURE);
+  }
+  strcpy(fs_ent_name, fs_ent->name);
+  push_back(path_list, fs_ent_name);
+
+  char* filepath = join_path(path_list);
+  destroy_path_list(path_list);
+  struct stat st;
+  if (stat(filepath, &st) != 0) {
+    perror("stat:");
+    debug_print("%s %s\n", "can't get stat for file", filepath);
+    free(filepath);
+    return -1;
+  }
+  free(filepath);
+  return st.st_size;
+}
+
+static char* get_file_descr(const char* dir_path, const FilesystemEntity* fs_ent, unsigned len, size_t fs_ent_name_len) {
+  off_t filesize = get_file_size(dir_path, fs_ent, fs_ent_name_len);
+  int filesize_len = snprintf(NULL, 0, "%jd", filesize);
+
+  char* buf = calloc(1, len + 1);
+  if (buf == NULL) {
+    debug_print("%s\n", "can't alloc");
+    exit(EXIT_FAILURE);
+  }
+
+  int padding = (int)len - fs_ent_name_len - 2 - NCURSES_WINDOW_RIGHT_SIZE_OFFSET;
+  if (padding <= 0) {
+    snprintf(buf, len + 1, "%s", fs_ent->name);
+  } else {
+    snprintf(buf, len + 1, "%s%*jd %s", fs_ent->name, padding, filesize, "f");
+  }
+  return buf;
+}
+
+static char* get_dir_descr(const char* dir_path, const FilesystemEntity* fs_ent, unsigned len, size_t fs_ent_name_len) {
+  char* buf = calloc(1, len + 1);
+  if (buf == NULL) {
+    debug_print("%s\n", "can't alloc");
+    exit(EXIT_FAILURE);
+  }
+
+  int padding = (int)len - fs_ent_name_len - NCURSES_WINDOW_RIGHT_SIZE_OFFSET;
+  if (padding <= 0) {
+    snprintf(buf, len + 1, "%s", fs_ent->name);
+  } else {
+    snprintf(buf, len + 1, "%s%*s", fs_ent->name, padding, "d");
+  }
+  return buf;
+}
+
+static char* get_other_descr(const FilesystemEntity* fs_ent, unsigned len, size_t fs_ent_name_len) {
+  debug_print("%s\n", "here somehow");
+}
+
+static char* get_fs_ent_descr(const char* dir_path, const FilesystemEntity* fs_ent, unsigned len) {
+  size_t name_len = strlen(fs_ent->name);
+  if (fs_ent->entity_type == ET_FILE) {
+    return get_file_descr(dir_path, fs_ent, len, name_len);
+  } else if (fs_ent->entity_type == ET_DIRECTORY) {
+    return get_dir_descr(dir_path, fs_ent, len, name_len);
+  }
+  return get_other_descr(fs_ent, len, name_len);
+}
+
+FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt, unsigned descr_length) {
   DIR *dir = opendir(path);
   if (dir == NULL) {
     perror("opendir");
@@ -62,6 +143,7 @@ FilesystemEntity *get_filesystem_entities(const char *path, size_t *cnt) {
     } else {
       buf[size].entity_type = ET_OTHER;
     }
+    buf[size].descr = get_fs_ent_descr(path, &buf[size], descr_length);
     ++size;
   }
   closedir(dir);
@@ -78,4 +160,11 @@ bool is_parent_directory(const FilesystemEntity *fs_ent) {
   }
   return strlen(fs_ent->name) == 2 && fs_ent->name[0] == '.' &&
          fs_ent->name[1] == '.';
+}
+
+void destroy_fs_entities(FilesystemEntity* fs_ent, size_t sz) {
+  for (size_t i = 0; i < sz; ++i) {
+    free(fs_ent[i].descr);
+  }
+  free(fs_ent);
 }

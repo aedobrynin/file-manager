@@ -12,19 +12,18 @@ bool update_menu(Context *ctx) {
 
   char *path = join_path(ctx->path_list);
 
-  size_t cur_fs_entities_sz;
+  size_t new_fs_entities_sz;
   FilesystemEntity *new_fs_entities =
-      get_filesystem_entities(path, &cur_fs_entities_sz);
-  ;
+      get_filesystem_entities(path, &new_fs_entities_sz, ctx->cols);
   free(path);
   if (new_fs_entities == NULL) {
     debug_print("%s\n", "can't get fs_entities");
     return false;
   }
-  free(ctx->cur_fs_entities);
+  destroy_fs_entities(ctx->cur_fs_entities, ctx->cur_fs_entities_sz);
   ctx->cur_fs_entities = new_fs_entities;
-
-  build_menu(ctx->menu_state, ctx->cur_fs_entities, cur_fs_entities_sz);
+  ctx->cur_fs_entities_sz = new_fs_entities_sz;
+  build_menu(ctx->menu_state, ctx->cur_fs_entities, ctx->cur_fs_entities_sz);
   post_menu(ctx->menu_state->menu);
   refresh();
   return true;

@@ -32,6 +32,7 @@ void init_context(Context *ctx) {
   init_menu_state(ctx->menu_state);
 
   ctx->cur_fs_entities = NULL;
+  ctx->cur_fs_entities_sz = 0;
 }
 
 void destroy_context(Context *ctx) {
@@ -41,5 +42,5 @@ void destroy_context(Context *ctx) {
   destroy_menu_state(ctx->menu_state);
   ctx->menu_state = NULL;
 
-  free(ctx->cur_fs_entities);
+  destroy_fs_entities(ctx->cur_fs_entities, ctx->cur_fs_entities_sz);
 }

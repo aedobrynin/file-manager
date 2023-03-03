@@ -26,12 +26,11 @@ void main_loop(Context *ctx) {
     case KEY_DOWN:
       menu_down(ctx->menu_state);
       break;
-    case KEY_LEFT:
-      return;
-      break;
     case REAL_ENTER:
       walk(ctx);
       break;
+    case KEY_BACKSPACE:
+      return;
     default:
       break;
     }

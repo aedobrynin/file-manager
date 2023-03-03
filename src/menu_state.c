@@ -39,7 +39,7 @@ void build_menu(MenuState *state, FilesystemEntity *fs_entities,
     exit(EXIT_FAILURE);
   }
   for (size_t i = 0; i < fs_ent_sz; ++i) {
-    state->items[i] = new_item(fs_entities[i].name, fs_entities[i].name);
+    state->items[i] = new_item(fs_entities[i].descr, fs_entities[i].descr);
     set_item_userptr(state->items[i], (void *)(fs_entities + i));
   }
   state->items[fs_ent_sz] = NULL;
